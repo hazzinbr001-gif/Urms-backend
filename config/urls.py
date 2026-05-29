@@ -16,8 +16,9 @@ urlpatterns = [
     # Root redirect: superusers go to admin dashboard, others to user dashboard
     path('', RedirectView.as_view(pattern_name='user_dashboard', permanent=False), name='home'),
 
-    # Dashboards
+    # Dashboards (both names kept for template compatibility)
     path('dashboard/', UserDashboardView.as_view(), name='user_dashboard'),
+    path('dashboard/home/', UserDashboardView.as_view(), name='dashboard'),
     path('admin-dashboard/', AdminDashboardView.as_view(), name='admin_dashboard'),
 
     # App URL includes

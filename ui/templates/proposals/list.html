@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Proposal Inbox | URMS{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="md:flex md:items-center md:justify-between border-b border-gray-200 pb-5">
+        <div class="flex-1 min-w-0">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                <i class="fa-solid fa-inbox text-brand-600 mr-2"></i> Workflow Inbox
+            </h2>
+            <p class="mt-1 text-sm text-gray-500">
+                Proposals requiring your attention based on your institutional role.
+            </p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
+        <div class="lg:col-span-3">
+            {% include "components/data_table.html" with title="Tasks" headers=table_headers rows=table_rows %}
+        </div>
+        <div class="lg:col-span-1">
+            {% if quick_actions %}
+                {% include "components/quick_actions.html" with actions=quick_actions %}
+            {% else %}
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-5 text-center text-gray-500 text-sm italic">
+                    <i class="fa-solid fa-circle-info text-2xl mb-2 text-gray-300"></i><br>
+                    You are viewing this inbox as a Reviewer/Admin. Actions are limited to proposals pending your approval.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

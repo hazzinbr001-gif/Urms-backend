@@ -1,7 +1,8 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.http import JsonResponse
-from core.views import DashboardView, PlaceholderView
+from django.views.generic import RedirectView
+from apps.dashboards.views import UserDashboardView, AdminDashboardView
 
 
 def health_check(request):
@@ -11,7 +12,18 @@ def health_check(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('health/', health_check, name='health_check'),
-    path('', DashboardView.as_view(), name='dashboard'),
-    path('dashboard/', DashboardView.as_view(), name='dashboard_explicit'),
-    path('core/placeholder/', PlaceholderView.as_view(), name='placeholder'),
+
+    # Root redirect: superusers go to admin dashboard, others to user dashboard
+    path('', RedirectView.as_view(pattern_name='user_dashboard', permanent=False), name='home'),
+
+    # Dashboards
+    path('dashboard/', UserDashboardView.as_view(), name='user_dashboard'),
+    path('admin-dashboard/', AdminDashboardView.as_view(), name='admin_dashboard'),
+
+    # App URL includes
+    path('accounts/', include('apps.accounts.urls')),
+    path('proposals/', include('apps.proposals.urls')),
+    path('audit/', include('apps.audit_logs.urls')),
+    path('documents/', include('apps.documents.urls')),
+    path('core/', include('core.urls')),
 ]

@@ -1,0 +1,27 @@
+<div class="bg-white overflow-hidden shadow rounded-lg border border-gray-200 flex flex-col hover:shadow-md transition-shadow">
+    <div class="p-5 flex-1">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <!-- Expects: icon_class (e.g. 'fa-solid fa-users') and icon_color (e.g. 'text-blue-500') -->
+                <i class="{{ icon_class }} {{ icon_color }} text-3xl"></i>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+                <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">{{ title }}</dt>
+                    <dd>
+                        <div class="text-2xl font-bold text-gray-900">{{ value }}</div>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    {% if link_url %}
+    <div class="bg-gray-50 px-5 py-3 border-t border-gray-200">
+        <div class="text-sm">
+            <a href="{{ link_url }}" class="font-medium text-brand-600 hover:text-brand-900 transition-colors">
+                {{ link_text|default:"View details" }} <span aria-hidden="true">&rarr;</span>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>

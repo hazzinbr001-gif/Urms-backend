@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}User Dashboard | URMS{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="md:flex md:items-center md:justify-between">
+        <div class="flex-1 min-w-0">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                Welcome back, {{ request.user.first_name|default:request.user.username }}!
+            </h2>
+            <p class="mt-1 text-sm text-gray-500">
+                Here's what's happening with your research proposals today.
+            </p>
+        </div>
+        <div class="mt-4 flex md:mt-0 md:ml-4">
+            <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors">
+                <i class="fa-solid fa-plus mr-2"></i> New Concept
+            </button>
+        </div>
+    </div>
+
+    <!-- Stat Cards Row -->
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
+        {% for card in stat_cards %}
+            {% include "components/stat_card.html" with title=card.title value=card.value icon_class=card.icon_class icon_color=card.icon_color %}
+        {% endfor %}
+    </div>
+
+    <!-- Main Content Area: Chart and Activities -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+        <!-- Left Column: Chart (Takes up 2/3 space on large screens) -->
+        <div class="lg:col-span-2 space-y-6">
+            {% include "components/data_chart.html" with title="Proposal Activity" chart_id="userChart" chart_config=chart_config %}
+
+            {% include "components/quick_actions.html" with actions=quick_actions %}
+        </div>
+
+        <!-- Right Column: Recent Activity (Takes up 1/3 space on large screens) -->
+        <div class="lg:col-span-1">
+            {% include "components/recent_activity.html" with activities=recent_activities title="Your Recent Activity" %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

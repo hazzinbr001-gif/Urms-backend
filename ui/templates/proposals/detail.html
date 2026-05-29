@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Proposal Detail | URMS{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="md:flex md:items-center md:justify-between border-b border-gray-200 pb-5">
+        <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 mb-2">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                    {{ proposal.get_state_display }}
+                </span>
+                <span class="text-sm text-gray-500">ID: {{ proposal.id|truncatechars:10 }}</span>
+            </div>
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl">
+                {{ proposal.title }}
+            </h2>
+            <p class="mt-2 text-sm text-gray-500 flex items-center gap-2">
+                <i class="fa-solid fa-user-graduate"></i> {{ proposal.student.get_full_name|default:proposal.student.username }}
+                <span class="mx-2">&bull;</span>
+                <i class="fa-solid fa-building-columns"></i> {{ proposal.university.name }}
+            </p>
+        </div>
+
+        <div class="mt-4 flex md:mt-0 md:ml-4">
+            <a href="{% url 'documents:tracking' proposal_id=proposal.id %}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <i class="fa-solid fa-folder-open mr-2 text-gray-500"></i>
+                Track Documents
+            </a>
+        </div>
+    </div>
+
+    <!-- Layout Split -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+        <!-- Left Column: Content & AI Insights -->
+        <div class="lg:col-span-2 space-y-6">
+            <div class="bg-white shadow rounded-lg border border-gray-200 p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4 border-b pb-2">Abstract</h3>
+                <div class="prose max-w-none text-gray-700">
+                    {{ proposal.abstract|linebreaks }}
+                </div>
+            </div>
+
+            {% if ai_score %}
+            <div class="bg-white shadow rounded-lg border border-gray-200 overflow-hidden">
+                <div class="bg-indigo-50 px-6 py-4 border-b border-indigo-100 flex items-center justify-between">
+                    <h3 class="text-lg font-medium text-indigo-900"><i class="fa-solid fa-brain mr-2"></i> AI Intelligence Engine</h3>
+                    <span class="text-sm font-bold text-indigo-700">Score: {{ ai_score.total_score }}/100</span>
+                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">Critique Strengths</h4>
+                        <ul class="list-disc pl-5 text-sm text-gray-600 space-y-1">
+                            {% for s in ai_critique.strengths %}<li>{{ s }}</li>{% endfor %}
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">Improvement Areas</h4>
+                        <ul class="list-disc pl-5 text-sm text-gray-600 space-y-1">
+                            {% for w in ai_critique.weaknesses %}<li>{{ w }}</li>{% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if plagiarism_report %}
+            <div class="bg-white shadow rounded-lg border border-gray-200 overflow-hidden">
+                <div class="bg-red-50 px-6 py-4 border-b border-red-100 flex items-center justify-between">
+                    <h3 class="text-lg font-medium text-red-900"><i class="fa-solid fa-shield-halved mr-2"></i> Integrity Engine</h3>
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full {% if plagiarism_report.status == 'PASS' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">{{ plagiarism_report.status }}</span>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm text-gray-600">Overall Similarity</span>
+                        <span class="font-bold text-lg {% if plagiarism_report.overall_similarity_score > 20 %}text-red-600{% else %}text-green-600{% endif %}">{{ plagiarism_report.overall_similarity_score }}%</span>
+                    </div>
+                    {% if plagiarism_report.matched_sources %}
+                    <h4 class="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-2">Sources</h4>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        {% for src in plagiarism_report.matched_sources %}
+                        <li class="flex justify-between border-b pb-1 border-gray-100">
+                            <span class="truncate pr-4">{{ src.url_or_document }}</span>
+                            <span class="font-medium text-red-500">{{ src.match_percentage }}%</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right Column: Actions & History -->
+        <div class="lg:col-span-1 space-y-6">
+
+            {% if available_transitions %}
+            <div class="bg-white shadow rounded-lg border border-gray-200 p-5">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4"><i class="fa-solid fa-gavel text-brand-600 mr-2"></i> Review Actions</h3>
+
+                <form action="{% url 'proposal_transition' proposal.id %}" method="POST" class="space-y-4">
+                    {% csrf_token %}
+                    <div>
+                        <label for="reason" class="block text-sm font-medium text-gray-700">Comments / Reason</label>
+                        <textarea id="reason" name="reason" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm border py-2 px-3" required></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-2">
+                        {% for trans in available_transitions %}
+                        <button type="submit" name="target_state" value="{{ trans.state }}" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white {% if 'REJECT' in trans.state %}bg-red-600 hover:bg-red-700{% else %}bg-brand-600 hover:bg-brand-700{% endif %} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors">
+                            {{ trans.label }}
+                        </button>
+                        {% endfor %}
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+
+            <div class="bg-white shadow rounded-lg border border-gray-200">
+                <div class="px-5 py-4 border-b border-gray-200">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Audit Trail</h3>
+                </div>
+                <div class="p-5 max-h-96 overflow-y-auto">
+                    <ul role="list" class="-mb-8">
+                        {% for log in audit_logs %}
+                        <li>
+                            <div class="relative pb-8">
+                                {% if not forloop.last %}<span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>{% endif %}
+                                <div class="relative flex space-x-3">
+                                    <div>
+                                        <span class="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white {% if 'REJECT' in log.new_state %}bg-red-500{% else %}bg-green-500{% endif %}">
+                                            <i class="fa-solid fa-check text-white text-xs"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
+                                        <div>
+                                            <p class="text-sm text-gray-500">{{ log.new_state }} <a href="#" class="font-medium text-gray-900">{{ log.actor.username|default:"System" }}</a></p>
+                                            {% if log.reason %}<p class="mt-1 text-sm text-gray-600 italic">"{{ log.reason }}"</p>{% endif %}
+                                        </div>
+                                        <div class="whitespace-nowrap text-right text-xs text-gray-500">
+                                            <time datetime="{{ log.created_at }}">{{ log.created_at|date:"M d, H:i" }}</time>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

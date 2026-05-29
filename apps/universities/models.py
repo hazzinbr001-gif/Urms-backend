@@ -1,5 +1,7 @@
 from django.db import models
-from core.models import BaseModel, SoftDeleteModel
+from django.utils.text import slugify
+from core.models import SoftDeleteModel
+
 
 class University(SoftDeleteModel):
     """
@@ -8,12 +10,26 @@ class University(SoftDeleteModel):
     """
     name = models.CharField(max_length=255)
     domain = models.CharField(max_length=100, unique=True, help_text="e.g., mit.edu")
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
     is_active = models.BooleanField(default=True)
 
-    # Theme Configuration
-    primary_color = models.CharField(max_length=7, default="#22c55e", help_text="Hex code for primary color")
-    secondary_color = models.CharField(max_length=7, default="#16a34a", help_text="Hex code for secondary color")
-    logo_url = models.URLField(blank=True, null=True, help_text="URL to the university's logo")
+    # Branding
+    description = models.TextField(blank=True, help_text="Short description shown on the login page")
+    primary_color = models.CharField(max_length=7, default="#22c55e")
+    secondary_color = models.CharField(max_length=7, default="#16a34a")
+    logo_url = models.URLField(blank=True, null=True)
+    background_image_url = models.URLField(blank=True, null=True, help_text="Hero image on the tenant login page")
+
+    # Governance
+    share_logs_with_superuser = models.BooleanField(
+        default=True,
+        help_text="Allow platform superadmins to see this tenant's audit logs"
+    )
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name

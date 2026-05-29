@@ -1,0 +1,17 @@
+<div class="bg-white shadow rounded-lg border border-gray-200 p-5">
+    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Quick Actions</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {% for action in actions %}
+        <a href="{{ action.url }}" class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-brand-500 hover:ring-1 hover:ring-brand-500 transition-all focus:outline-none">
+            <div class="flex-shrink-0">
+                <i class="{{ action.icon }} text-2xl text-gray-400"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <span class="absolute inset-0" aria-hidden="true"></span>
+                <p class="text-sm font-medium text-gray-900">{{ action.title }}</p>
+                <p class="text-sm text-gray-500 truncate">{{ action.desc }}</p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>

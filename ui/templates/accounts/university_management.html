@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}University Tenant Management | URMS{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="md:flex md:items-center md:justify-between border-b border-gray-200 pb-5">
+        <div class="flex-1 min-w-0">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                <i class="fa-solid fa-building-columns text-brand-600 mr-2"></i> Tenant Management
+            </h2>
+            <p class="mt-1 text-sm text-gray-500">
+                Superuser control panel for managing onboarded universities.
+            </p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
+        <div class="lg:col-span-3">
+            {% include "components/data_table.html" with title="Registered Universities" headers=table_headers rows=table_rows %}
+        </div>
+        <div class="lg:col-span-1">
+            {% include "components/quick_actions.html" with actions=quick_actions %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | URMS{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="md:flex md:items-center md:justify-between border-b border-gray-200 pb-5">
+        <div class="flex-1 min-w-0">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                <i class="fa-solid fa-shield-halved text-brand-600 mr-2"></i> Administration Hub
+            </h2>
+            <p class="mt-1 text-sm text-gray-500">
+                System-wide overview and enterprise governance controls.
+            </p>
+        </div>
+        <div class="mt-4 flex md:mt-0 md:ml-4 gap-3">
+            <a href="{% url 'placeholder' %}?feature=Export%20Report" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors">
+                <i class="fa-solid fa-download mr-2"></i> Export Report
+            </a>
+        </div>
+    </div>
+
+    <!-- Infrastructure Health Row -->
+    <div class="mb-6">
+        {% include "components/health_widget.html" with db_status=db_status cache_status=cache_status worker_status=worker_status %}
+    </div>
+
+    <!-- Stat Cards Row -->
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {% for card in stat_cards %}
+            {% include "components/stat_card.html" with title=card.title value=card.value icon_class=card.icon_class icon_color=card.icon_color %}
+        {% endfor %}
+    </div>
+
+    <!-- Main Content Area: Chart and Tenant Table -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+        <!-- Left Column: Chart and Quick Actions -->
+        <div class="lg:col-span-2 space-y-6">
+            {% include "components/data_chart.html" with title="System Traffic Overview" chart_id="adminChart" chart_config=chart_config %}
+
+            <!-- Reusable Data Table Component for Dynamic Dashboard Content -->
+            {% include "components/data_table.html" with title=data_table_title headers=table_headers rows=table_rows action_btn_text=table_action_btn_text action_btn_url=table_action_btn_url %}
+        </div>
+
+        <!-- Right Column: Quick Actions & Audit Logs -->
+        <div class="lg:col-span-1 space-y-6">
+            {% include "components/quick_actions.html" with actions=quick_actions %}
+
+            {% include "components/recent_activity.html" with activities=recent_activities title="Security & Audit Log" %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

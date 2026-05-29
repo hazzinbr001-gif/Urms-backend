@@ -54,3 +54,15 @@ class Roles:
         (RESEARCH_OFFICE_ADMIN, 'Research Office Admin'),
         (EXTERNAL_EXAMINER, 'External Examiner'),
     ]
+
+    # Numeric power level — higher number = more authority in the hierarchy
+    HIERARCHY = {
+        STUDENT: 10,
+        SUPERVISOR: 20,
+        EXTERNAL_EXAMINER: 30,
+        DEPARTMENT_COMMITTEE: 40,
+        HOD: 50,
+        SCHOOL_COMMITTEE: 60,
+        ETHICS_COMMITTEE: 70,
+        RESEARCH_OFFICE_ADMIN: 80,
+    }

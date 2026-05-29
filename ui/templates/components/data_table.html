@@ -1,0 +1,79 @@
+<div class="bg-white shadow rounded-lg border border-gray-200 overflow-hidden">
+    <div class="px-5 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">{{ title|default:"Data Table" }}</h3>
+        {% if action_btn_text %}
+        <a href="{{ action_btn_url|default:'#' }}" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500">
+            {{ action_btn_text }}
+        </a>
+        {% endif %}
+    </div>
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    {% for header in headers %}
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ header }}
+                    </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for row in rows %}
+                <tr class="hover:bg-gray-50 transition-colors">
+                    {% for cell in row.cells %}
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {{ cell }}
+                    </td>
+                    {% endfor %}
+
+                    {% if row.status_badge %}
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {{ row.status_badge|safe }}
+                    </td>
+                    {% elif row.cells|length < headers|length and not row.actions and not row.no_actions_message %}
+                        {# Handle case where a row doesn't use the standard action/badge dict formatting but rather raw html #}
+                    {% endif %}
+
+                    {% if row.raw_html_cell %}
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {{ row.raw_html_cell|safe }}
+                    </td>
+                    {% endif %}
+
+                    {% if row.actions %}
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <div class="flex space-x-3 items-center">
+                            {% if row.actions.can_edit %}
+                            <a href="{{ row.actions.edit_url }}" class="text-blue-600 hover:text-blue-900 inline-block" title="Edit"><i class="fa-solid {% if row.actions.type == 'user' %}fa-user-pen{% else %}fa-pen-to-square{% endif %}"></i></a>
+                            {% endif %}
+
+                            {% if row.actions.can_toggle %}
+                            <form method="POST" class="inline m-0 p-0">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="toggle_status">
+                                <input type="hidden" name="{{ row.actions.id_field }}" value="{{ row.actions.id_value }}">
+                                <button type="submit" class="{% if row.actions.is_active %}text-red-600 hover:text-red-900{% else %}text-green-600 hover:text-green-900{% endif %}" title="{% if row.actions.is_active %}Suspend{% else %}Activate{% endif %}">
+                                    <i class="fa-solid {% if row.actions.type == 'user' %}{% if row.actions.is_active %}fa-user-large-slash{% else %}fa-user-check{% endif %}{% else %}{% if row.actions.is_active %}fa-ban{% else %}fa-check{% endif %}{% endif %}"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                    {% elif row.no_actions_message %}
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <span class="text-gray-400 text-xs italic">{{ row.no_actions_message }}</span>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="100%" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                        No records found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

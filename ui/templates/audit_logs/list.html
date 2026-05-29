@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Governance Logs | URMS{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="md:flex md:items-center md:justify-between border-b border-gray-200 pb-5">
+        <div class="flex-1 min-w-0">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                <i class="fa-solid fa-shield-halved text-brand-600 mr-2"></i> Enterprise Governance Logs
+            </h2>
+            <p class="mt-1 text-sm text-gray-500">
+                Immutable ledger of all state transitions and critical actions across the platform.
+            </p>
+        </div>
+        <div class="mt-4 flex md:mt-0 md:ml-4 gap-3">
+            <a href="{% url 'placeholder' %}?feature=Filter%20Logs" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                <i class="fa-solid fa-filter mr-2"></i> Filter
+            </a>
+            <a href="{% url 'placeholder' %}?feature=Export%20Logs" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 transition-colors">
+                <i class="fa-solid fa-download mr-2"></i> Export CSV
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6">
+        <div class="col-span-1">
+            {% include "components/data_table.html" with title="Audit Trail" headers=table_headers rows=table_rows %}
+        </div>
+
+        <!-- Basic Pagination -->
+        {% if is_paginated %}
+        <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 shadow rounded-lg">
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm text-gray-700">
+                        Showing page <span class="font-medium">{{ page_obj.number }}</span> of <span class="font-medium">{{ page_obj.paginator.num_pages }}</span>
+                    </p>
+                </div>
+                <div>
+                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                        {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <span class="sr-only">Previous</span>
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+                        {% endif %}
+                        {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <span class="sr-only">Next</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                        {% endif %}
+                    </nav>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

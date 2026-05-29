@@ -7,12 +7,6 @@
 
     <!-- Industrial Grade UI: Tailwind CSS via CDN for rapid SaaS development -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        :root {
-            --color-brand-primary: {{ theme.primary_color|default:'#22c55e' }};
-            --color-brand-secondary: {{ theme.secondary_color|default:'#16a34a' }};
-        }
-    </style>
     <script>
         tailwind.config = {
             theme: {
@@ -21,8 +15,8 @@
                         brand: {
                             50: '#f0fdf4',
                             100: '#dcfce7',
-                            500: 'var(--color-brand-primary)',
-                            600: 'var(--color-brand-secondary)',
+                            500: '#22c55e',
+                            600: '#16a34a',
                             700: '#15803d',
                             900: '#14532d',
                         }
@@ -65,6 +59,10 @@
 
     <!-- Global Modals Placeholder -->
     {% include "modals/base_modal.html" %}
+
+    <!-- Chart.js dependency (Local) -->
+    {% load static %}
+    <script src="{% static 'js/chart.umd.js' %}"></script>
 
     {% block extra_js %}{% endblock %}
 </body>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}URMS Enterprise Platform{% endblock %}</title>
+
+    <!-- Industrial Grade UI: Tailwind CSS via CDN for rapid SaaS development -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --color-brand-primary: {{ theme.primary_color|default:'#22c55e' }};
+            --color-brand-secondary: {{ theme.secondary_color|default:'#16a34a' }};
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: 'var(--color-brand-primary)',
+                            600: 'var(--color-brand-secondary)',
+                            700: '#15803d',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome for robust, industrial-grade icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="h-full font-sans antialiased text-gray-900 overflow-hidden flex flex-col">
+
+    <!-- Top Navbar -->
+    {% include "components/navbar.html" %}
+
+    <div class="flex flex-1 overflow-hidden">
+        <!-- Reusable Sidebar -->
+        {% include "components/sidebar.html" %}
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto bg-gray-50 p-6 sm:p-8">
+            <div class="max-w-7xl mx-auto flex flex-col min-h-full">
+                <!-- Content injected here -->
+                <div class="flex-1">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+
+                <!-- Reusable Footer -->
+                <div class="mt-8">
+                    {% include "components/footer.html" %}
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Global Modals Placeholder -->
+    {% include "modals/base_modal.html" %}
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

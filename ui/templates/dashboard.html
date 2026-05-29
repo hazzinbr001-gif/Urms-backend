@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load role_tags %}
+
+{% block title %}Dashboard - URMS{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+    <p class="text-gray-500">Welcome back, {{ request.user.username|default:"User" }}!</p>
+</div>
+
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <!-- Card 1: Always visible to students/users (e.g. Their Proposals) -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-brand-100 text-brand-600">
+                <i class="fa-regular fa-folder-open text-xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-500">My Active Proposals</p>
+                <p class="text-2xl font-semibold text-gray-900">3</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 2: Only visible to Supervisors and above -->
+    {% if request.user|has_role:"SUPERVISOR" or request.user|has_role:"HOD" or request.user|has_role:"DEPARTMENT_COMMITTEE" or request.user|has_role:"SCHOOL_COMMITTEE" or request.user|has_role:"ETHICS_COMMITTEE" or request.user|has_role:"RESEARCH_OFFICE_ADMIN" or request.user.is_superuser %}
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                <i class="fa-solid fa-list-check text-xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-500">Pending Reviews</p>
+                <p class="text-2xl font-semibold text-gray-900">12</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Card 3: System-wide Stats. Only visible to Admins/Superusers -->
+    {% if request.user|has_role:"RESEARCH_OFFICE_ADMIN" or request.user.is_superuser %}
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                <i class="fa-solid fa-chart-line text-xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-500">Total System Proposals</p>
+                <p class="text-2xl font-semibold text-gray-900">1,204</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Main Dashboard Content area -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 min-h-[300px] flex items-center justify-center">
+    <div class="text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+            <i class="fa-solid fa-rocket text-2xl text-gray-400"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900">Recent Activity</h3>
+        <p class="mt-1 text-gray-500">No recent activity to display.</p>
+    </div>
+</div>
+{% endblock %}

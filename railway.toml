@@ -1,0 +1,16 @@
+[build]
+builder = "NIXPACKS"
+
+[build.nixpacksPlan.phases.setup]
+nixPkgs = ["python311", "postgresql"]
+
+[deploy]
+startCommand = "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
+healthcheckPath = "/health/"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+[deploy.envVariables]
+DJANGO_SETTINGS_MODULE = "config.settings_production"
+PYTHONUNBUFFERED = "1"

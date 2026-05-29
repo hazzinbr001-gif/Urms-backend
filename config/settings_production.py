@@ -29,7 +29,9 @@ MIDDLEWARE = [
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Use CompressedStaticFilesStorage instead of CompressedManifestStaticFilesStorage 
+# to avoid post-processing errors with certain JS files like chart.umd.js
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 _cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', '')
 CORS_ALLOWED_ORIGINS = [o.strip() for o in _cors_origins.split(',') if o.strip()]

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - {{ university.name }} | URMS</title>
+    <title>Login - {{ university.name|default:"System" }} | URMS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -21,7 +21,7 @@
                 {% endif %}
                 <h2 class="mt-6 text-3xl font-bold tracking-tight text-gray-900">Sign in to your account</h2>
                 <p class="mt-2 text-sm text-gray-600">
-                    Enterprise Research Portal for <span class="font-semibold">{{ university.name }}</span>
+                    Enterprise Research Portal for <span class="font-semibold">{{ university.name|default:"URMS Platform" }}</span>
                 </p>
             </div>
 
@@ -37,7 +37,7 @@
                 {% endif %}
 
                 <div class="mt-6">
-                    <form action="{% url 'tenant_login' university.slug %}" method="POST" class="space-y-6">
+                    <form action="{% if university %}{% url 'tenant_login' university.slug %}{% else %}{% url 'login' %}{% endif %}" method="POST" class="space-y-6">
                         {% csrf_token %}
                         <div>
                             <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Institution Email address</label>
@@ -79,7 +79,7 @@
 
         <!-- Branding Content Overlay -->
         <div class="absolute inset-0 flex flex-col justify-center items-center px-12 text-center">
-            <h1 class="text-4xl font-extrabold text-white tracking-tight sm:text-5xl lg:text-6xl">{{ university.name }}</h1>
+            <h1 class="text-4xl font-extrabold text-white tracking-tight sm:text-5xl lg:text-6xl">{{ university.name|default:"URMS" }}</h1>
             {% if university.description %}
             <p class="mt-6 max-w-2xl text-xl text-gray-200">
                 {{ university.description }}

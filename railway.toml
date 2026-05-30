@@ -7,7 +7,7 @@ nixPkgs = ["python311", "postgresql"]
 [deploy]
 # startCommand is managed by Procfile or can be set here. 
 # Railway usually prioritizes railway.toml if present.
-startCommand = "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
+startCommand = "python manage.py migrate && python setup_sample_data.py && python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
 # preDeployCommand = "python manage.py migrate --noinput || true"
 # healthcheckPath = "/health/"
 # healthcheckTimeout = 300

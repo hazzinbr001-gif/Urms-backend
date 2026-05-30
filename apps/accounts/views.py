@@ -49,6 +49,13 @@ class TenantLoginView(View):
             request.session['2fa_expiry'] = (timezone.now() + timedelta(minutes=10)).timestamp()
             request.session['tenant_slug'] = slug or 'system'
 
+            # Temporarily bypass 2FA for the admin user for initial setup
+            if user.username == 'admin':
+                auth_login(request, user)
+                if user.is_superuser:
+                    return redirect('admin_dashboard')
+                return redirect('user_dashboard')
+
             send_2fa_otp_email(user, otp)
             return redirect('verify_2fa')
         else:
